@@ -1,74 +1,87 @@
 <?php
+session_start();
+require "../inc/connectionToMySql.php";
 
-// MySQLi
-$dbServerName = "INSERT HERE YOUR HOST";
-$dbUserName = "INSERT HERE YOUR USERNAME";
-$dbPassword = "INSERT HERE YOUR PASSWORD";
-$dbName = "INSERT HERE YOUR DB NAME";
-
-// Connect to db
-$conn = mysqli_connect($dbServerName, $dbUserName, $dbPassword, $dbName);
-
-// If there is an error...
-if(!$conn){
-    echo 'Connection error: ' . mysqli_connect_error();
+// Getting value of the select and passing it to query component
+if (isset($_POST['moreRows'])) {
+  if (!empty($_POST['moreRows'])) {
+    $selectedQ = $_POST['moreRows'];
+    $_SESSION["newsession"] = $selectedQ;
+    echo $selectedQ;
+  } else {
+    $selectedQ = 10;
+    echo $selectedQ;
+  }
 }
-// Query that will get all entries
-$sql = 'SELECT id FROM maindb LIMIT 10';
-
-// Query and get result
-$result = mysqli_query($conn, $sql);
-
-// Fetch the results
-$rawData = mysqli_fetch_all($result, MYSQLI_ASSOC);
-
-// Freeing the result from memory
-mysqli_free_result($result);
-
-// Close connection
-mysqli_close($conn);
 ?>
-
 
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Hello Bulma!</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css"
-    />
-  </head>
-  <body>
-    <div class="container">
-      <div class="columns">
-        <div class="column">
-          <table class="table table is-bordered">
-            <thead>
-              <th><abbr title="ID">Id</abbr></th> 
-              <th><abbr title="First Name">First Name</abbr></th> 
-              <th><abbr title="Last Name">First Name</abbr></th> 
-              <th><abbr title="Email">Email</abbr></th> 
-              <th><abbr title="Gender">Gender</abbr></th> 
-              <th><abbr title="IPAddress">Gender</abbr></th> 
 
-            </thead>
-            <tbody>
-              
-              <?php foreach($rawData as $data){?>
-                <tr>
-              <th>
-                <abbr title="ID"><?php echo htmlspecialchars($data['id']); ?></abbr>
-              </th>
-              </tr>
-            <?php } ?>
-               
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </body>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Data from Mysql</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css" />
+</head>
+
+<body>
+  <div class="container m-5">
+    <h1 class="is-size-1">Fetched data</h1>
+  </div>
+  <div class="container m-5">
+    <table class="table table is-bordered">
+      <thead>
+        <th>Id</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Gender</th>
+        <th>IP Address</th>
+      </thead>
+      <tbody>
+        <!-- Mapping the data ID column-->
+        <?php foreach ($rawData as $data) { ?>
+          <tr>
+            <!-- As Row Header, ID col -->
+            <th>
+              <?php echo htmlspecialchars($data['id']); ?>
+            </th>
+            <!-- As first cel, first name, second last name etc etc col -->
+            <td>
+              <?php echo htmlspecialchars($data['first_name']); ?>
+            </td>
+            <!-- Last Name col -->
+            <td>
+              <?php echo htmlspecialchars($data['last_name']); ?>
+            </td>
+            <!-- Email col -->
+            <td>
+              <?php echo htmlspecialchars($data['email']); ?>
+            </td>
+            <!-- Gender col -->
+            <td>
+              <?php echo htmlspecialchars($data['gender']); ?>
+            </td>
+            <!-- Ip Address col -->
+            <td>
+              <?php echo htmlspecialchars($data['ip_address']); ?>
+            </td>
+          </tr>
+        <?php } ?>
+        <!-- End Mapping the data -->
+      </tbody>
+    </table>
+    <form method="POST">
+      <select name="moreRows">
+        <option disabled selected>Choose Quantity</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="40">40</option>
+      </select>
+      <input type="submit" name="submit" value="Choose Options">
+    </form>
+  </div>
+</body>
+
 </html>
