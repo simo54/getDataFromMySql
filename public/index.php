@@ -3,16 +3,16 @@ session_start();
 require "../inc/connectionToMySql.php";
 
 // Getting value of the select and passing it to query component
-if (isset($_POST['moreRows'])) {
-  if (!empty($_POST['moreRows'])) {
+if(isset($_POST['moreRows'])){
+  if(!empty($_POST['moreRows'])){
     $selectedQ = $_POST['moreRows'];
-    $_SESSION["newsession"] = $selectedQ;
-    echo $selectedQ;
-  } else {
-    $selectedQ = 10;
-    echo $selectedQ;
-  }
+    $_SESSION["rows"]=$selectedQ;
+    // Post-Redirect-Get code in order to get more/less row with one submit only => https://stackoverflow.com/questions/4142809/simple-php-post-redirect-get-code-example
+    header( "Location: {$_SERVER['REQUEST_URI']}", true, 303 );
+   exit();
+  } 
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -26,9 +26,9 @@ if (isset($_POST['moreRows'])) {
 </head>
 
 <body>
-  <div class="container m-5">
-    <h1 class="is-size-1">Fetched data</h1>
-  </div>
+<div class="container m-5">
+  <h1 class="is-size-1">Fetched data</h1>
+</div>
   <div class="container m-5">
     <table class="table table is-bordered">
       <thead>
@@ -73,15 +73,17 @@ if (isset($_POST['moreRows'])) {
       </tbody>
     </table>
     <form method="POST">
-      <select name="moreRows">
-        <option disabled selected>Choose Quantity</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
-        <option value="40">40</option>
-      </select>
-      <input type="submit" name="submit" value="Choose Options">
-    </form>
+<select name="moreRows">
+<option disabled selected>Choose Quantity</option>
+<option value="20">20</option>
+<option value="30">30</option>
+<option value="40">40</option>
+</select>
+<input type="submit" name="submit" value="Choose Options">
+</form>
+
   </div>
+ 
 </body>
 
 </html>
